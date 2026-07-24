@@ -1,0 +1,80 @@
+version: "3.8"
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      RESUMIND_ENV: development
+      RESUMIND_DATABASE_URL: postgresql://resumind:resumind@postgres:5432/resumind
+      RESUMIND_REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - postgres
+      - redis
+
+  worker:
+    build: .
+    command: celery -A tasks worker -l info
+    environment:
+      RESUMIND_DATABASE_URL: postgresql://resumind:resumind@postgres:5432/resumind
+      RESUMIND_REDIS_URL: redis://redis:6379/0
+      RESUMIND_CELERY_BROKER_URL: redis://redis:6379/0
+      RESUMIND_CELERY_RESULT_BACKEND: redis://redis:6379/0
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: resumind
+      POSTGRES_PASSWORD: resumind
+      POSTGRES_DB: resumind
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  langfuse:
+    image: langfuse/langfuse:latest
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://resumind:resumind@postgres:5432/resumind
+      NEXTAUTH_SECRET: change-me-secret
+    depends_on:
+      - postgres
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  tempo:
+    image: grafana/tempo:latest
+    ports:
+      - "4317:4317"
+      - "3200:3200"
+
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+
+volumes:
+  pgdata:
+  grafana-data:
