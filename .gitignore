@@ -8,6 +8,13 @@ cache/
 resume_evaluations.csv
 greenhouse_resumes/*
 
+# Generated sample PDFs
+sample_indian_resume.pdf
+sample_scanned_indian_resume.pdf
+
+# Benchmark scripts
+scripts/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
