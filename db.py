@@ -1,5 +1,5 @@
 """
-Database models and session management for Kunj.
+Database models and session management for Resumind.
 """
 import logging
 from sqlalchemy import (

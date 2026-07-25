@@ -1,5 +1,5 @@
 scrape_configs:
-  - job_name: "kunj-api"
+  - job_name: "resumind-api"
     scrape_interval: 15s
     static_configs:
       - targets: ["api:8000"]

@@ -13,7 +13,7 @@ class TestAPI:
             assert r.status_code == 200
             data = r.json()
             assert data["status"] == "ok"
-            assert data["app"] == "Kunj"
+            assert data["app"] == "Resumind"
 
     async def test_evaluate_no_file(self):
         transport = ASGITransport(app=app)

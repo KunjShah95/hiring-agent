@@ -5,9 +5,9 @@ services:
     ports:
       - "8000:8000"
     environment:
-      KUNJ_ENV: development
-      KUNJ_DATABASE_URL: postgresql://kunj:kunj@postgres:5432/kunj
-      KUNJ_REDIS_URL: redis://redis:6379/0
+      RESUMIND_ENV: development
+      RESUMIND_DATABASE_URL: postgresql://resumind:resumind@postgres:5432/resumind
+      RESUMIND_REDIS_URL: redis://redis:6379/0
     depends_on:
       - postgres
       - redis
@@ -16,10 +16,10 @@ services:
     build: .
     command: celery -A tasks worker -l info
     environment:
-      KUNJ_DATABASE_URL: postgresql://kunj:kunj@postgres:5432/kunj
-      KUNJ_REDIS_URL: redis://redis:6379/0
-      KUNJ_CELERY_BROKER_URL: redis://redis:6379/0
-      KUNJ_CELERY_RESULT_BACKEND: redis://redis:6379/0
+      RESUMIND_DATABASE_URL: postgresql://resumind:resumind@postgres:5432/resumind
+      RESUMIND_REDIS_URL: redis://redis:6379/0
+      RESUMIND_CELERY_BROKER_URL: redis://redis:6379/0
+      RESUMIND_CELERY_RESULT_BACKEND: redis://redis:6379/0
     depends_on:
       - postgres
       - redis
@@ -27,9 +27,9 @@ services:
   postgres:
     image: pgvector/pgvector:pg16
     environment:
-      POSTGRES_USER: kunj
-      POSTGRES_PASSWORD: kunj
-      POSTGRES_DB: kunj
+      POSTGRES_USER: resumind
+      POSTGRES_PASSWORD: resumind
+      POSTGRES_DB: resumind
     ports:
       - "5432:5432"
     volumes:
@@ -46,7 +46,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: postgresql://kunj:kunj@postgres:5432/kunj
+      DATABASE_URL: postgresql://resumind:resumind@postgres:5432/resumind
       NEXTAUTH_SECRET: change-me-secret
     depends_on:
       - postgres

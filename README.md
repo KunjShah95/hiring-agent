@@ -1,4 +1,4 @@
-# Kunj
+# Resumind
 
 <p align="center"><strong>AI-powered hiring evaluation platform</strong> — parse resumes, enrich with GitHub signals, evaluate with LLMs, integrate with Indian job boards. Built for the Indian hiring market.</p>
 
@@ -36,7 +36,7 @@
 
 ## Overview
 
-Kunj parses a resume PDF to Markdown, extracts sectioned JSON using a local or hosted LLM, augments the data with GitHub profile and repository signals, then produces an objective evaluation with category scores, evidence, bonus points, and deductions. You can run fully local with Ollama or use Google Gemini.
+Resumind parses a resume PDF to Markdown, extracts sectioned JSON using a local or hosted LLM, augments the data with GitHub profile and repository signals, then produces an objective evaluation with category scores, evidence, bonus points, and deductions. You can run fully local with Ollama or use Google Gemini.
 
 ---
 
@@ -281,4 +281,4 @@ Please read the [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed guidelines on 
 
 ## License
 
-[MIT](LICENSE) © Kunj Contributors
+[MIT](LICENSE) © Resumind Contributors

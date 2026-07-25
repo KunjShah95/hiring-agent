@@ -15,6 +15,7 @@
 ### Task 1.1: Update README, LICENSE, CONTRIBUTING
 
 **Files:**
+
 - Modify: `README.md`
 - Modify: `CONTRIBUTING.md`
 - Modify: `LICENSE`
@@ -36,6 +37,7 @@
 ### Task 1.2: Update code references from HackerRank to Kunj
 
 **Files:**
+
 - Modify: `config.py`
 - Modify: `models.py` (module docstring)
 
@@ -60,6 +62,7 @@ DEVELOPMENT_MODE = True
 ### Task 2.1: Add settings to config.py
 
 **Files:**
+
 - Modify: `config.py`
 - Create: `tests/test_config.py`
 
@@ -126,6 +129,7 @@ settings = load_settings()
 ### Task 2.2: Create FastAPI service (api.py)
 
 **Files:**
+
 - Create: `api.py`
 - Create: `tests/test_api.py`
 
@@ -274,6 +278,7 @@ Expected: PASS
 ### Task 3.1: Create observability module
 
 **Files:**
+
 - Create: `observability.py`
 - Create: `tests/test_observability.py`
 
@@ -372,6 +377,7 @@ Expected: PASS
 ### Task 3.2: Add LangFuse integration
 
 **Files:**
+
 - Modify: `evaluator.py`
 - Create: `tests/test_langfuse.py` (optional, depends on network)
 
@@ -423,6 +429,7 @@ def _record_langfuse_trace(self, prompt: str, response_text: str, duration_ms: f
 ### Task 3.3: Create metrics module
 
 **Files:**
+
 - Create: `metrics.py`
 
 - [ ] **Step 1: Create metrics.py**
@@ -484,6 +491,7 @@ def track_duration(func):
 ### Task 4.1: Create Celery worker
 
 **Files:**
+
 - Create: `worker.py`
 - Create: `tasks.py`
 
@@ -587,6 +595,7 @@ def evaluate_resume(self, pdf_path: str):
 ### Task 5.1: Create database models
 
 **Files:**
+
 - Create: `db.py`
 - Create: `tests/test_db.py`
 
@@ -730,6 +739,7 @@ Expected: PASS
 ### Task 6.1: Create Textual TUI
 
 **Files:**
+
 - Create: `tui.py`
 - Create: `tests/test_tui.py` (optional — Textual requires terminal)
 - Modify: `score.py` (add ASCII header on startup)
@@ -835,6 +845,7 @@ print("""
 ### Task 7.1: Add Indian candidate fields to models.py
 
 **Files:**
+
 - Modify: `models.py`
 
 - [ ] **Step 1: Add IndianCandidateProfile class**
@@ -858,6 +869,7 @@ class IndianCandidateProfile(BaseModel):
 ### Task 7.2: Create integration base
 
 **Files:**
+
 - Create: `integration_base.py`
 - Create: `naukri.py`
 - Create: `indeed.py`
@@ -1096,6 +1108,7 @@ class GlassdoorIntegration(JobBoardIntegration):
 ### Task 8.1: Docker Compose
 
 **Files:**
+
 - Create: `Dockerfile`
 - Create: `docker-compose.yml`
 - Create: `prometheus.yml`

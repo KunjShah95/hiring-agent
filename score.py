@@ -431,7 +431,7 @@ def process_pipeline(pdf_path: str) -> Optional[dict]:
 def main(pdf_path):
     print("""
 ╔══════════════════════════════════════════╗
-║             KUNJ - EVALUATION               ║
+║             RESUMIND - EVALUATION               ║
 ║     AI-Powered Hiring Platform           ║
 ╚══════════════════════════════════════════╝
 """)

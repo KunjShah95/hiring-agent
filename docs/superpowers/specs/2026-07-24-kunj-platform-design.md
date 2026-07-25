@@ -62,6 +62,7 @@ Transform the existing `hiring-agent` CLI pipeline (HackerRank origin) into **Ku
 ### 2.2 Component Details
 
 #### Core Service (FastAPI)
+
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/evaluate` | POST | Single resume evaluation (async, returns job_id) |
@@ -77,6 +78,7 @@ Transform the existing `hiring-agent` CLI pipeline (HackerRank origin) into **Ku
 | `/metrics` | GET | Prometheus metrics endpoint |
 
 #### TUI Client (Textual)
+
 | Screen | Purpose |
 |--------|---------|
 | `Dashboard` | Overview: recent evaluations, queue status, system health |
@@ -88,6 +90,7 @@ Transform the existing `hiring-agent` CLI pipeline (HackerRank origin) into **Ku
 | `Settings` | Model config, API keys, notification preferences |
 
 #### Integrations Layer
+
 | Platform | Capabilities | Auth |
 |----------|--------------|------|
 | Naukri | Resume search/download, job posting, application webhooks | API key + secret |
@@ -99,6 +102,7 @@ Transform the existing `hiring-agent` CLI pipeline (HackerRank origin) into **Ku
 ## 3. Rebranding Scope
 
 ### 3.1 Package & Code
+
 | Current | New |
 |---------|-----|
 | Package: `hiring-agent` | `kunj` |
@@ -108,6 +112,7 @@ Transform the existing `hiring-agent` CLI pipeline (HackerRank origin) into **Ku
 | Module structure | `kunj/{core,tui,integrations,observability}` |
 
 ### 3.2 Documentation & Branding
+
 - README: New title, badge, description
 - LICENSE: Update copyright from `© HackerRank` → `© Kunj Contributors`
 - CONTRIBUTING.md: Update org references
@@ -115,6 +120,7 @@ Transform the existing `hiring-agent` CLI pipeline (HackerRank origin) into **Ku
 - ASCII logo for TUI header
 
 ### 3.3 Prompts & Templates
+
 - No functional changes needed (provider-agnostic)
 - Update template headers/comments to reference Kunj
 
@@ -125,6 +131,7 @@ Transform the existing `hiring-agent` CLI pipeline (HackerRank origin) into **Ku
 ### 4.1 Dual-Stack Approach
 
 #### LangFuse (LLM Observability) — Self-Hosted
+
 ```
 Instrumentation points:
 ├── PDF Extraction (per-section LLM calls)
@@ -142,10 +149,12 @@ Captured per trace:
 ```
 
 **Deployment:** Docker Compose (PostgreSQL + ClickHouse + LangFuse)
+
 - Free self-hosted, unlimited traces
 - OpenTelemetry native ingestion
 
 #### Grafana Stack (Infrastructure Observability)
+
 ```
 Metrics (Prometheus):
 - HTTP: request rate, latency (p50/p95/p99), error rate by endpoint
@@ -173,6 +182,7 @@ Dashboards (Grafana):
 ```
 
 ### 4.2 Alerting Rules
+
 | Alert | Condition | Severity |
 |-------|-----------|----------|
 | HighErrorRate | `rate(http_errors[5m]) > 0.05` | Critical |
@@ -186,6 +196,7 @@ Dashboards (Grafana):
 ## 5. Indian Market Adaptation
 
 ### 5.1 Data Model Extensions
+
 ```python
 # Additional fields for Indian context
 class IndianCandidateProfile(BaseModel):
@@ -199,6 +210,7 @@ class IndianCandidateProfile(BaseModel):
 ```
 
 ### 5.2 Resume Normalization
+
 - Parse Indian resume formats (Naukri PDF, Indeed PDF, LinkedIn PDF)
 - Extract: CTC, notice period, preferred location, visa status
 - Map Indian education boards to standardized format
@@ -207,21 +219,25 @@ class IndianCandidateProfile(BaseModel):
 ### 5.3 Job Board Integrations
 
 #### Naukri (Primary)
+
 - **Resume Ingestion**: Search API → download resumes → normalize → evaluate
 - **Job Posting**: Create job via API → track application webhooks
 - **Candidate Search**: Keyword + location + experience + salary filters
 
 #### Indeed (Secondary)
+
 - **Resume Ingestion**: Indeed Resume API (if approved)
 - **Job Posting**: Indeed Publisher API / XML feed
 - **Webhooks**: Application notifications
 
 #### Glassdoor (Tertiary)
+
 - **Job Posting**: Partner API
 - **Employer Branding**: Sync company profile, reviews
 - **Salary Data**: Benchmark CTC expectations
 
 ### 5.4 Sync Scheduler
+
 ```
 Cron: Every 4 hours
 ├── Naukri: Fetch new resumes matching saved searches
@@ -318,6 +334,7 @@ CREATE INDEX idx_syncs_platform_status ON integration_syncs(platform, status);
 ## 7. Configuration
 
 ### 7.1 Environment Variables
+
 ```bash
 # Core
 KUNJ_ENV=development              # development, staging, production
@@ -356,6 +373,7 @@ KUNJ_CELERY_RESULT_BACKEND=redis://...
 ## 8. Deployment
 
 ### 8.1 Local Development (Docker Compose)
+
 ```yaml
 services:
   postgres: postgres:16
@@ -371,6 +389,7 @@ services:
 ```
 
 ### 8.2 Production Options
+
 | Target | Services |
 |--------|----------|
 | VM (single) | Docker Compose + systemd |

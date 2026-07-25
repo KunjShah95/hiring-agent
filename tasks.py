@@ -1,5 +1,5 @@
 """
-Async tasks for Kunj evaluation pipeline.
+Async tasks for Resumind.evaluation pipeline.
 """
 from worker import app as celery_app
 from pdf import PDFHandler

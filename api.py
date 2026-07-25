@@ -1,5 +1,5 @@
 """
-Kunj FastAPI service — resume evaluation API.
+Resumind FastAPI service — resume evaluation API.
 """
 from fastapi import FastAPI, UploadFile, File, HTTPException, Query, Body
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,9 +15,9 @@ from datetime import datetime
 logger = logging.getLogger(__name__)
 
 app = FastAPI(
-    title=settings.get("APP_NAME", "Kunj"),
+    title=settings.get("APP_NAME", "Resumind"),
     version="0.1.0",
-    description="Kunj hiring evaluation platform",
+    description="Resumind hiring evaluation platform",
 )
 
 app.add_middleware(
@@ -79,7 +79,7 @@ async def health():
     """Health check with DB, Redis, and integration status."""
     health_data = {
         "status": "ok",
-        "app": settings.get("APP_NAME", "Kunj"),
+        "app": settings.get("APP_NAME", "Resumind"),
         "version": "0.1.0",
         "env": settings.get("ENV", "development"),
     }

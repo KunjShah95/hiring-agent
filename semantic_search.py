@@ -1,5 +1,5 @@
 """
-Semantic search for Kunj — BGE-M3 embeddings + pgvector similarity search.
+Semantic search for Resumind.— BGE-M3 embeddings + pgvector similarity search.
 
 Provides:
 - EmbedAndSearchMixin: Generate embeddings and search across candidates

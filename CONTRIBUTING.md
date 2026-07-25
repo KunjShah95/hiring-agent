@@ -8,7 +8,7 @@ Thanks for your interest in improving this project. Contributions are welcome, i
 2. Open a new bug report: https://github.com/kunj-platform/kunj/issues/new
 3. Please include:
    - Clear description of the issue and expected behavior
-   - Environment info: OS, Python version, Kunj commit or version
+   - Environment info: OS, Python version, Resumind commit or version
    - Steps to reproduce
    - Relevant logs or stack traces
 

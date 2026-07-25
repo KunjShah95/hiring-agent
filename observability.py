@@ -1,5 +1,5 @@
 """
-Observability for Kunj — logging, tracing, metrics.
+Observability for Resumind.— logging, tracing, metrics.
 """
 import structlog
 import logging
@@ -56,6 +56,6 @@ def setup_tracing(app: FastAPI = None) -> bool:
     return True
 
 
-def get_tracer(name: str = "kunj"):
+def get_tracer(name: str = "resumind"):
     """Get a tracer for the given name."""
     return trace.get_tracer(name)

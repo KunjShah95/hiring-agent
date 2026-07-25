@@ -1,5 +1,5 @@
 """
-Naukri.com integration for Kunj.
+Naukri.com integration for Resumind.
 """
 from typing import List, Dict, Optional
 from datetime import datetime

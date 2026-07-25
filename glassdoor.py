@@ -1,5 +1,5 @@
 """
-Glassdoor integration for Kunj.
+Glassdoor integration for Resumind.
 """
 from typing import List, Dict
 from datetime import datetime

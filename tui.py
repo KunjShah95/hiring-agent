@@ -1,5 +1,5 @@
 """
-Kunj Terminal UI — Textual-based interactive dashboard.
+Resumind Terminal UI — Textual-based interactive dashboard.
 Screens: Dashboard, Candidates, Evaluations, Jobs, Integrations, Settings
 """
 from textual.app import App, ComposeResult
@@ -57,7 +57,7 @@ class DashboardScreen(Screen):
     def compose(self) -> ComposeResult:
         yield Header()
         with Vertical():
-            yield Static("Kunj Dashboard", classes="title")
+            yield Static("Resumind Dashboard", classes="title")
             with Horizontal(classes="status-bar"):
                 yield Static("🔌 API: Checking...", id="api-status", classes="status-item")
                 yield Static("📨 Queue: -", id="queue-status", classes="status-item")
@@ -596,7 +596,7 @@ class SettingsScreen(Screen):
 
         content = (
             f"[bold]Application[/bold]\n"
-            f"App Name: Kunj\n"
+            f"App Name: Resumind\n"
             f"Version: 0.1.0\n"
             f"Environment: {env}\n\n"
             f"[bold]LLM Provider[/bold]\n"
@@ -629,8 +629,8 @@ class SettingsScreen(Screen):
 
 # ─── Main App ────────────────────────────────────────────────────────────
 
-class KunjTUI(App):
-    TITLE = "Kunj"
+class ResumindTUI(App):
+    TITLE = "Resumind"
     SUB_TITLE = "Hiring Evaluation Platform"
     CSS = """
     .title {
@@ -687,8 +687,8 @@ class KunjTUI(App):
 
 
 def run_tui(api_url: str = "http://localhost:8000", api_key: str = None):
-    """Launch the Kunj TUI."""
-    app = KunjTUI(api_url=api_url, api_key=api_key)
+    """Launch the Resumind TUI."""
+    app = ResumindTUI(api_url=api_url, api_key=api_key)
     app.run()
 
 
