@@ -245,8 +245,8 @@ class EvaluationData(BaseModel):
     scores: Scores
     bonus_points: BonusPoints
     deductions: Deductions
-    key_strengths: List[str] = Field(min_items=1, max_items=5)
-    areas_for_improvement: List[str] = Field(min_items=1, max_items=5)
+    key_strengths: List[str] = Field(min_length=1, max_length=5)
+    areas_for_improvement: List[str] = Field(min_length=1, max_length=5)
 
 
 class GitHubProfile(BaseModel):

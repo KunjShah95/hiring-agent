@@ -113,7 +113,7 @@ def get_network_name(domain: str) -> str:
         "linkedin.com": "LinkedIn",
         "leetcode.com": "LeetCode",
         "stackoverflow.com": "Stack Overflow",
-        "hackerrank.com": "Resumind",
+        "hackerrank.com": "HackerRank",
         "behance.net": "Behance",
         "dev.to": "DEV Community",
         "twitter.com": "X",

@@ -1,5 +1,5 @@
 """
-Indeed integration for Resumind.
+Indeed integration for Kunj.
 """
 from typing import List, Dict
 from datetime import datetime

@@ -1,11 +1,11 @@
 """
-Celery worker configuration for Resumind.
+Celery worker configuration for Kunj.
 """
 from celery import Celery
 from config import settings
 
 app = Celery(
-    "resumind",
+    "kunj",
     broker=settings.get("CELERY_BROKER_URL", "redis://localhost:6379/0"),
     backend=settings.get("CELERY_RESULT_BACKEND", "redis://localhost:6379/0"),
     include=["tasks"],

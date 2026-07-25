@@ -5,9 +5,9 @@ services:
     ports:
       - "8000:8000"
     environment:
-      RESUMIND_ENV: development
-      RESUMIND_DATABASE_URL: postgresql://resumind:resumind@postgres:5432/resumind
-      RESUMIND_REDIS_URL: redis://redis:6379/0
+      KUNJ_ENV: development
+      KUNJ_DATABASE_URL: postgresql://kunj:kunj@postgres:5432/kunj
+      KUNJ_REDIS_URL: redis://redis:6379/0
     depends_on:
       - postgres
       - redis
@@ -16,24 +16,25 @@ services:
     build: .
     command: celery -A tasks worker -l info
     environment:
-      RESUMIND_DATABASE_URL: postgresql://resumind:resumind@postgres:5432/resumind
-      RESUMIND_REDIS_URL: redis://redis:6379/0
-      RESUMIND_CELERY_BROKER_URL: redis://redis:6379/0
-      RESUMIND_CELERY_RESULT_BACKEND: redis://redis:6379/0
+      KUNJ_DATABASE_URL: postgresql://kunj:kunj@postgres:5432/kunj
+      KUNJ_REDIS_URL: redis://redis:6379/0
+      KUNJ_CELERY_BROKER_URL: redis://redis:6379/0
+      KUNJ_CELERY_RESULT_BACKEND: redis://redis:6379/0
     depends_on:
       - postgres
       - redis
 
   postgres:
-    image: postgres:16
+    image: pgvector/pgvector:pg16
     environment:
-      POSTGRES_USER: resumind
-      POSTGRES_PASSWORD: resumind
-      POSTGRES_DB: resumind
+      POSTGRES_USER: kunj
+      POSTGRES_PASSWORD: kunj
+      POSTGRES_DB: kunj
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    command: ["postgres", "-c", "shared_preload_libraries=vector"]
 
   redis:
     image: redis:7-alpine
@@ -45,7 +46,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: postgresql://resumind:resumind@postgres:5432/resumind
+      DATABASE_URL: postgresql://kunj:kunj@postgres:5432/kunj
       NEXTAUTH_SECRET: change-me-secret
     depends_on:
       - postgres

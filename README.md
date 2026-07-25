@@ -1,4 +1,4 @@
-# Resumind
+# Kunj
 
 <p align="center"><strong>AI-powered hiring evaluation platform</strong> — parse resumes, enrich with GitHub signals, evaluate with LLMs, integrate with Indian job boards. Built for the Indian hiring market.</p>
 
@@ -6,7 +6,7 @@
   <a href="https://www.python.org/downloads/release/python-3110/">
     <img alt="Python" src="https://img.shields.io/badge/python-3.11%2B-blue.svg">
   </a>
-  <a href="https://github.com/interviewstreet/hiring-agent/blob/master/LICENSE">
+  <a href="LICENSE">
     <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-yellow.svg">
   </a>
   <a href="https://github.com/psf/black">
@@ -36,7 +36,7 @@
 
 ## Overview
 
-Hiring Agent parses a resume PDF to Markdown, extracts sectioned JSON using a local or hosted LLM, augments the data with GitHub profile and repository signals, then produces an objective evaluation with category scores, evidence, bonus points, and deductions. You can run fully local with Ollama or use Google Gemini.
+Kunj parses a resume PDF to Markdown, extracts sectioned JSON using a local or hosted LLM, augments the data with GitHub profile and repository signals, then produces an objective evaluation with category scores, evidence, bonus points, and deductions. You can run fully local with Ollama or use Google Gemini.
 
 ---
 
@@ -48,7 +48,7 @@ Hiring Agent parses a resume PDF to Markdown, extracts sectioned JSON using a lo
 
 **Flow**
 
-1. `pymupdf_rag.py` converts PDF pages to Markdown-like text.
+1. `pdf.py` parses PDFs using the hybrid pipeline — pymupdf4llm for clean digital PDFs (fast, structured markdown) and Docling OCR for scanned/image-based PDFs.
 2. `pdf.py` calls the LLM per section using Jinja templates under `prompts/templates`.
 3. `github.py` fetches profile and repos, classifies projects, and asks the LLM to select the top 7.
 4. `evaluator.py` runs a strict-scored evaluation with fairness constraints.
@@ -94,8 +94,8 @@ Hiring Agent parses a resume PDF to Markdown, extracts sectioned JSON using a lo
 ### Quick setup with pip
 
 ```bash
-$ git clone https://github.com/interviewstreet/hiring-agent
-$ cd hiring-agent
+$ git clone https://github.com/kunj-platform/kunj
+$ cd kunj
 
 $ python -m venv .venv
 # Linux or macOS
@@ -159,8 +159,8 @@ You can leave it on during iteration. See the next section for details.
 <details>
 <summary><b>1) PDF extraction</b></summary>
 
-- `pymupdf_rag.py` and `pdf.py` read the PDF using PyMuPDF and convert pages to Markdown-like text.
-- The `to_markdown` routine handles headings, links, tables, and basic formatting.
+- `pdf.py` reads PDFs using a hybrid pipeline: pymupdf4llm for clean digital PDFs (fast, structured markdown) and Docling OCR for scanned/image-based PDFs.
+- A heuristic detects whether the PDF has embedded text (>200 chars and ≥3 newlines) and routes to the appropriate engine.
 
 </details>
 
@@ -243,7 +243,7 @@ What happens:
 │       ├── skills.jinja
 │       ├── system_message.jinja
 │       └── work.jinja
-├── pymupdf_rag.py
+├── pdf.py
 ├── requirements.txt
 ├── score.py
 └── transform.py
@@ -281,4 +281,4 @@ Please read the [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed guidelines on 
 
 ## License
 
-[MIT](https://github.com/interviewstreet/hiring-agent/blob/master/LICENSE) © Resumind Contributors
+[MIT](LICENSE) © Kunj Contributors

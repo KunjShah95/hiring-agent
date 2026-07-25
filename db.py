@@ -1,13 +1,23 @@
 """
-Database models and session management for Resumind.
+Database models and session management for Kunj.
 """
+import logging
 from sqlalchemy import (
     Column, String, Integer, Float, DateTime, Text, JSON,
-    ForeignKey, create_engine
+    ForeignKey, create_engine, event, text
 )
 from sqlalchemy.orm import DeclarativeBase, relationship, sessionmaker
 from datetime import datetime
 from config import settings
+from semantic_search import EMBEDDING_DIM
+
+# pgvector support — gracefully handle if not installed
+try:
+    from pgvector.sqlalchemy import VECTOR
+    HAS_PGVECTOR = True
+except ImportError:
+    HAS_PGVECTOR = False
+    VECTOR = None
 
 
 class Base(DeclarativeBase):
@@ -33,6 +43,7 @@ class Candidate(Base):
     resume_json = Column(JSON)
     github_data = Column(JSON)
     portfolio_data = Column(JSON)
+    embedding = Column(VECTOR(EMBEDDING_DIM), nullable=True) if HAS_PGVECTOR else Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -80,6 +91,21 @@ class Job(Base):
     evaluations = relationship("Evaluation", back_populates="job")
 
 
+class IntegrationSync(Base):
+    __tablename__ = "integration_syncs"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    platform = Column(String(50))  # 'naukri', 'indeed', 'glassdoor'
+    sync_type = Column(String(50))  # 'resume_ingest', 'job_post', 'webhook'
+    status = Column(String(20), default="pending")  # 'pending', 'running', 'completed', 'failed'
+    items_processed = Column(Integer, default=0)
+    items_failed = Column(Integer, default=0)
+    error_details = Column(JSON)
+    started_at = Column(DateTime)
+    completed_at = Column(DateTime)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
 def get_engine():
     url = settings.get("DATABASE_URL", "")
     if not url:
@@ -91,3 +117,32 @@ def init_db():
     engine = get_engine()
     if engine:
         Base.metadata.create_all(engine)
+        _create_vector_index(engine)
+
+
+logger = logging.getLogger(__name__)
+
+
+def _create_vector_index(engine):
+    """Create HNSW index on the embedding column for fast approximate search.
+
+    HNSW (Hierarchical Navigable Small World) is a graph-based index that
+    provides logarithmic search complexity. This index is for cosine distance
+    (vector_cosine_ops) which matches our normalized embeddings.
+    """
+    if not HAS_PGVECTOR:
+        logger.info("pgvector not available — skipping vector index creation")
+        return
+
+    try:
+        with engine.connect() as conn:
+            conn.execute(
+                text(
+                    "CREATE INDEX IF NOT EXISTS idx_candidates_embedding "
+                    "ON candidates USING hnsw (embedding vector_cosine_ops)"
+                )
+            )
+            conn.commit()
+            logger.info("Created HNSW index on candidates.embedding")
+    except Exception as e:
+        logger.warning(f"Failed to create vector index: {e}")

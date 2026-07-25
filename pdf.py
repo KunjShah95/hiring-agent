@@ -3,7 +3,6 @@ import sys
 import json
 import time
 import logging
-import pymupdf
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from models import (
@@ -22,8 +21,10 @@ from models import (
     AwardsSection,
 )
 from llm_utils import initialize_llm_provider, extract_json_from_response
-from pymupdf_rag import to_markdown
+from docling.document_converter import DocumentConverter
 from typing import List, Optional, Dict, Any
+import pymupdf
+import pymupdf4llm
 from prompt import (
     DEFAULT_MODEL,
     MODEL_PARAMETERS,
@@ -40,26 +41,95 @@ class PDFHandler:
     def __init__(self):
         self.template_manager = TemplateManager()
         self._initialize_llm_provider()
+        self._docling_converter = None
 
     def _initialize_llm_provider(self):
         """Initialize the appropriate LLM provider based on the model."""
         self.provider = initialize_llm_provider(DEFAULT_MODEL)
+
+    def _get_docling_converter(self):
+        """Lazy-init and cache the Docling converter to avoid reloading models."""
+        if self._docling_converter is None:
+            logger.debug("Initializing Docling DocumentConverter...")
+            self._docling_converter = DocumentConverter()
+        return self._docling_converter
+
+    def _check_pdf_type(self, pdf_path: str) -> dict:
+        """
+        Check if a PDF has embedded text (clean digital) or is image-only (scanned).
+
+        Returns a dict with:
+          - has_embedded_text: bool
+          - is_scanned: bool (True if likely scanned/image-based)
+        """
+        try:
+            doc = pymupdf.open(pdf_path)
+            total_text = ""
+            total_chars = 0
+            for page in doc:
+                text = page.get_text()
+                total_text += text + "\n\n"
+                total_chars += len(text.strip())
+            doc.close()
+
+            # Heuristic: check if PDF has embedded text (clean digital) or is
+            # image-based (scanned). Uses two checks:
+            #   1. Char threshold: if <200 non-whitespace chars → scanned
+            #   2. Structure check: if >200 chars but <3 newlines → garbled text
+            #      (e.g. wrong font encoding, form-field placeholders)
+            char_threshold = 200
+            min_newlines = 3
+            newline_count = total_text.count("\n")
+            has_embedded_text = total_chars > char_threshold and newline_count >= min_newlines
+
+            logger.debug(
+                f"PDF type check: {os.path.basename(pdf_path)} "
+                f"({total_chars} chars, {newline_count} newlines, "
+                f"threshold={char_threshold}/{min_newlines}) "
+                f"-> {'digital' if has_embedded_text else 'scanned/garbled'}"
+            )
+            return {
+                "has_embedded_text": has_embedded_text,
+                "is_scanned": not has_embedded_text,
+            }
+        except Exception as e:
+            logger.warning(f"Could not check PDF type for {pdf_path}: {e}")
+            return {
+                "has_embedded_text": False,
+                "is_scanned": True,
+            }
 
     def extract_text_from_pdf(self, pdf_path: str) -> Optional[str]:
         try:
             if not os.path.exists(pdf_path):
                 raise FileNotFoundError(f"PDF file not found: {pdf_path}")
 
-            with pymupdf.open(pdf_path) as doc:
-                pages = range(doc.page_count)
-                resume_text = to_markdown(
-                    doc,
-                    pages=pages,
+            # Step 1: Check if PDF has embedded text (clean digital) or is scanned
+            pdf_info = self._check_pdf_type(pdf_path)
+
+            if pdf_info["has_embedded_text"]:
+                # Fast path: clean digital PDF — use pymupdf4llm (fast, structured markdown)
+                doc = pymupdf.open(pdf_path)
+                resume_text = pymupdf4llm.to_markdown(
+                    doc, pages=list(range(doc.page_count))
                 )
+                doc.close()
                 logger.debug(
-                    f"Extracted text from PDF: {len(resume_text) if resume_text else 0} characters"
+                    f"Fast path (pymupdf4llm): extracted {len(resume_text)} chars from digital PDF"
                 )
-                return resume_text
+            else:
+                # Slow path: scanned/image PDF — use Docling's OCR pipeline
+                logger.debug(
+                    f"Docling path: running OCR pipeline on scanned PDF..."
+                )
+                converter = self._get_docling_converter()
+                result = converter.convert(pdf_path)
+                resume_text = result.document.export_to_markdown()
+                logger.debug(
+                    f"Docling path: extracted {len(resume_text) if resume_text else 0} chars"
+                )
+
+            return resume_text
         except Exception as e:
             logger.error(f"An error occurred while reading the PDF: {e}")
             return None
